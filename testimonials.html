@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ticksy - What People Say</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #ffe4e1, #fff5f0);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 80px 20px 20px;
+      overflow-x: hidden;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      padding: 15px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .logo {
+      font-size: 28px;
+      color: #ff6b6b;
+      font-weight: 600;
+    }
+
+    nav a {
+      margin-left: 25px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #ff6b6b;
+    }
+
+    .user-info {
+      display: none;
+      font-weight: 600;
+      color: #ff6b6b;
+    }
+
+    .logout-btn {
+      margin-left: 15px;
+      padding: 5px 10px;
+      background: #ff6b6b;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: #e65c50;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: #ff6b6b;
+      margin-bottom: 50px;
+      text-align: center;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+
+    .testimonial-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 40px;
+      width: 100%;
+      max-width: 1200px;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+      transform: translateY(30px);
+      opacity: 0;
+      animation: slideUp 1s forwards;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+    }
+
+    .card:nth-child(1) { animation-delay: 0.2s; }
+    .card:nth-child(2) { animation-delay: 0.4s; }
+    .card:nth-child(3) { animation-delay: 0.6s; }
+    .card:nth-child(4) { animation-delay: 0.8s; }
+
+    .card p {
+      font-size: 1rem;
+      line-height: 1.8;
+      color: #444;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .author {
+      font-weight: 600;
+      color: #ff6b6b;
+      text-align: right;
+      font-style: italic;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px 10px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      font-size: 14px;
+      color: #555;
+      margin-top: 40px;
+      width: 100%;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+      }
+
+      header {
+        flex-direction: column;
+        padding: 15px;
+      }
+
+      nav a {
+        margin: 8px 10px;
+      }
+
+      .testimonial-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Ticksy <i class="fas fa-check-circle" style="color: var(--gold);"></i></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a id="nav-login" href="login.html">Login</a>
+      <a id="nav-signup" href="signup.html">Sign Up</a>
+      <span id="nav-user" class="user-info"></span>
+      <button id="logout-btn" class="logout-btn" style="display: none;">Logout</button>
+    </nav>
+  </header>
+
+  <h1>What People Say About Ticksy</h1>
+  <div class="testimonial-container">
+    <div class="card">
+      <p>"Ticksy has completely changed how I manage my daily routine. It's so simple yet powerful!"</p>
+      <div class="author">– Arjun M.</div>
+    </div>
+    <div class="card">
+      <p>"The pastel design and smooth transitions are just wow! I love checking off my tasks now."</p>
+      <div class="author">– Shruti R.</div>
+    </div>
+    <div class="card">
+      <p>"Unlike other apps, Ticksy actually makes me want to stay organized. Highly recommend!"</p>
+      <div class="author">– Mehul K.</div>
+    </div>
+    <div class="card">
+      <p>"From sign-up to task tracking, every screen feels modern and polished. Great job team!"</p>
+      <div class="author">– Priya V.</div>
+    </div>
+  </div>
+
+  <footer>
+    © 2025 Ticksy. Built with calm, code & creativity 💡
+  </footer>
+
+  <script>
+    window.addEventListener('load', () => {
+      const user = JSON.parse(localStorage.getItem('ticksyUser'));
+      if (user) {
+        document.getElementById('nav-login').style.display = 'none';
+        document.getElementById('nav-signup').style.display = 'none';
+        document.getElementById('nav-user').innerText = `Hi, ${user.name}`;
+        document.getElementById('nav-user').style.display = 'inline-block';
+        document.getElementById('logout-btn').style.display = 'inline-block';
+      }
+       const logo = document.querySelector('.logo');
+      logo.addEventListener('click', () => {
+        window.location.href = 'index.html';
+      });
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        localStorage.removeItem('ticksyUser');
+        document.getElementById('nav-user').style.display = 'none';
+        document.getElementById('logout-btn').style.display = 'none';
+        document.getElementById('nav-login').style.display = 'inline';
+        document.getElementById('nav-signup').style.display = 'inline';
+      });
+    });
+  </script>
+
+</body>
+</html>

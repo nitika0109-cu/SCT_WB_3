@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up - Ticksy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --peach: #fff0e6;
+      --coral: #ff8474;
+      --glass: rgba(255, 255, 255, 0.6);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--peach), #fffdf9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .signup-box {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 420px;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--coral);
+      font-weight: 600;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      background-color: rgba(255, 255, 255, 0.85);
+    }
+
+    input::placeholder {
+      color: #999;
+      font-size: 14px;
+    }
+
+    input[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--coral);
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #ff6d5e;
+    }
+
+    .login-link {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .login-link a {
+      color: var(--coral);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .signup-box {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <form class="signup-box" onsubmit="handleSignup(event)">
+    <h2>Create Your Ticksy Account</h2>
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <input type="submit" value="Sign Up">
+    <p class="login-link">Already have an account? <a href="login.html">Log in</a></p>
+  </form>
+
+  <script>
+    function handleSignup(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+
+      // Basic validation
+      if (!name || !email || !password) {
+        alert("Please fill all fields.");
+        return;
+      }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+      if (password.length < 6) {
+        alert("Password must be at least 6 characters long.");
+        return;
+      }
+
+      // Load existing users
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+      if (users.find(u => u.email === email)) {
+        alert("Email already registered.");
+        return;
+      }
+
+      // Add new user
+      users.push({ name, email, password });
+      localStorage.setItem('users', JSON.stringify(users));
+
+      alert("Signup successful! Please log in.");
+      window.location.href = "login.html";
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Ticksy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --peach: #fff0e6;
+      --coral: #ff8474;
+      --glass: rgba(255, 255, 255, 0.6);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, var(--peach), #fffdf9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .login-box {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+      animation: fadeIn 1.2s ease-in-out;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--coral);
+      font-weight: 600;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 10px 14px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 15px;
+      background-color: rgba(255, 255, 255, 0.85);
+    }
+
+    input::placeholder {
+      color: #999;
+      font-size: 14px;
+    }
+
+    input[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      background-color: var(--coral);
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #ff6d5e;
+    }
+
+    .signup-link {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 14px;
+      color: #444;
+    }
+
+    .signup-link a {
+      color: var(--coral);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 500px) {
+      .login-box {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <form class="login-box" onsubmit="handleLogin(event)">
+    <h2>Login to Ticksy</h2>
+    <input type="email" id="login-email" placeholder="Email Address" required>
+    <input type="password" id="login-password" placeholder="Password" required>
+    <input type="submit" value="Login">
+    <p class="signup-link">Don't have an account? <a href="signup.html">Sign up here</a></p>
+  </form>
+
+  <script>
+    function handleLogin(e) {
+      e.preventDefault();
+
+      const email = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-password").value;
+
+      // Basic email validation
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+
+      // Load users from localStorage
+      let users = JSON.parse(localStorage.getItem('users')) || [];
+      const user = users.find(u => u.email === email && u.password === password);
+
+      if (user) {
+        localStorage.setItem('ticksyUser', JSON.stringify({ name: user.name, email: user.email }));
+        alert("Login successful!");
+        window.location.href = "index.html";
+      } else {
+        alert("Invalid email or password.");
+      }
+    }
+  </script>
+
+</body>
+</html>

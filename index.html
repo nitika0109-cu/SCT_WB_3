@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ticksy - Organize Your Day</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --peach: #ffe8d9;
+      --salmon: #ff6f61;
+      --white: #fff;
+      --glass: rgba(255, 255, 255, 0.8);
+      --mint: #d0f4de;
+      --sky: #a2d2ff;
+      --lavender: #cdb4db;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--mint), var(--peach), var(--lavender));
+      color: #333;
+      overflow-x: hidden;
+      margin-top: 60px;
+    }
+
+    header {
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .logo {
+      font-size: 28px;
+      color: var(--salmon);
+      font-weight: 600;
+    }
+
+    nav a {
+      margin-left: 25px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: var(--salmon);
+    }
+
+    .user-info {
+      display: none;
+      font-weight: 600;
+      color: var(--salmon);
+    }
+
+    .logout-btn {
+      margin-left: 15px;
+      padding: 5px 10px;
+      background: var(--salmon);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .logout-btn:hover {
+      background: #e65c50;
+    }
+
+    section {
+      min-height: 100vh;
+      padding: 120px 40px 60px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 1s ease;
+    }
+
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #hero h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      color: #222;
+      text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    #hero p {
+      font-size: 18px;
+      max-width: 700px;
+      color: #444;
+      line-height: 1.6;
+    }
+
+    .cta {
+      padding: 15px 30px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 10px;
+      background: var(--salmon);
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .cta:hover {
+      background: #e65c50;
+      transform: scale(1.05);
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 40px;
+      margin-top: 80px;
+      max-width: 1200px;
+    }
+
+    .feature-box {
+      background: var(--glass);
+      border-radius: 15px;
+      padding: 35px 25px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .feature-box:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .feature-box h3 {
+      font-size: 22px;
+      margin-bottom: 15px;
+      color: var(--salmon);
+    }
+
+    .feature-box p {
+      font-size: 16px;
+      color: #555;
+    }
+
+    .subscribe-btn {
+      padding: 15px 30px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 10px;
+      background: var(--salmon);
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .subscribe-btn:hover {
+      background: #e65c50;
+      transform: scale(1.05);
+    }
+
+    footer {
+      background: var(--glass);
+      backdrop-filter: blur(8px);
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 14px;
+      color: #555;
+      margin-top: 50px;
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        padding: 15px;
+      }
+
+      nav a {
+        margin: 10px 15px;
+        display: inline-block;
+      }
+
+      #hero h1 {
+        font-size: 36px;
+      }
+
+      #hero p {
+        font-size: 16px;
+      }
+
+      .cta, .subscribe-btn {
+        padding: 12px 24px;
+        font-size: 16px;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Ticksy</div>
+    <nav>
+      <a href="#hero">Home</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a href="subscribe.html">Subscribe</a>
+      <a id="nav-login" href="login.html">Login</a>
+      <a id="nav-signup" href="signup.html">Sign Up</a>
+      <span id="nav-user" class="user-info"></span>
+      <button id="logout-btn" class="logout-btn" style="display: none;">Logout</button>
+    </nav>
+  </header>
+
+  <section id="hero">
+    <h1>Welcome to Ticksy</h1>
+    <p>Your playful, pastel-powered planner to boost productivity without the stress. Organize tasks, set goals, and breeze through your day with ease!</p>
+    <a href="signup.html" class="cta">Get Started</a>
+    <div class="features">
+      <div class="feature-box">
+        <h3>✨ Plan Smarter</h3>
+        <p>Use intuitive task categories and reminders to never miss a goal.</p>
+      </div>
+      <div class="feature-box">
+        <h3>🌈 Stay Motivated</h3>
+        <p>Daily motivation boosters and streak counters to keep you going strong.</p>
+      </div>
+      <div class="feature-box">
+        <h3>📊 Track Progress</h3>
+        <p>Visual dashboards help track your task completions & consistency.</p>
+      </div>
+    </div>
+    <a href="subscribe.html" class="subscribe-btn">Subscribe Now</a>
+  </section>
+
+  <footer>
+    © 2025 Ticksy. Built for productivity & pastel lovers 💖
+  </footer>
+
+  <script>
+    const sections = document.querySelectorAll('section');
+    const revealOnScroll = () => {
+      sections.forEach(section => {
+        const top = section.getBoundingClientRect().top;
+        const triggerPoint = window.innerHeight / 1.3;
+        if (top < triggerPoint) {
+          section.classList.add('visible');
+        }
+      });
+    };
+
+    window.addEventListener('scroll', revealOnScroll);
+    window.addEventListener('load', () => {
+      revealOnScroll();
+
+      const user = JSON.parse(localStorage.getItem('ticksyUser'));
+      if (user) {
+        document.getElementById('nav-login').style.display = 'none';
+        document.getElementById('nav-signup').style.display = 'none';
+        document.getElementById('nav-user').innerText = `Hi, ${user.name}`;
+        document.getElementById('nav-user').style.display = 'inline-block';
+        document.getElementById('logout-btn').style.display = 'inline-block';
+        document.querySelector('.cta').setAttribute('href', 'task-scheduler.html'); // Redirect to task scheduler for logged-in users
+      }
+
+      document.getElementById('logout-btn').addEventListener('click', () => {
+        localStorage.removeItem('ticksyUser');
+        document.getElementById('nav-user').style.display = 'none';
+        document.getElementById('logout-btn').style.display = 'none';
+        document.getElementById('nav-login').style.display = 'inline';
+        document.getElementById('nav-signup').style.display = 'inline';
+      });
+    });
+  </script>
+
+</body>
+</html>

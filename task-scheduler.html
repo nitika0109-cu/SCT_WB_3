@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ticksy - Task Scheduler</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    :root {
+      --peach: #ffe8d9;
+      --salmon: #ff6f61;
+      --mint: #d0f4de;
+      --lavender: #cdb4db;
+      --gold: #ffd700;
+      --shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--mint), var(--peach), var(--lavender));
+      color: #333;
+      min-height: 100vh;
+      margin-top: 60px;
+      overflow-x: hidden;
+      transition: all 0.3s ease;
+    }
+
+    body.dark-mode {
+      background: linear-gradient(135deg, #2e4a3d, #4a2c2a, #4a3d5a);
+      color: #e0e0e0;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 40px;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+      animation: fadeIn 1s ease;
+    }
+
+    .logo {
+      font-size: 28px;
+      color: var(--salmon);
+      font-weight: 600;
+      text-shadow: 1px 1px 5px rgba(255, 111, 97, 0.3);
+      cursor: pointer;
+      transition: color 0.3s ease, transform 0.3s ease;
+    }
+
+    .logo:hover {
+      color: var(--gold);
+      transform: scale(1.1);
+    }
+
+    nav a {
+      margin-left: 15px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: var(--salmon);
+    }
+
+    .user-info {
+      font-weight: 600;
+      color: var(--salmon);
+    }
+
+    .logout-btn, #dark-mode-toggle {
+      margin-left: 15px;
+      padding: 8px 15px;
+      background: var(--salmon);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+
+    .logout-btn:hover, #dark-mode-toggle:hover {
+      background: color-mix(in srgb, var(--salmon) 80%, #e65c50);
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    main {
+      padding: 120px 40px 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .task-form {
+      background: rgba(255, 255, 255, 0.85);
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 650px;
+      margin-bottom: 30px;
+      animation: bounceIn 1s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    #task-input, #task-time, #task-notes {
+      padding: 12px;
+      border: 2px solid var(--lavender);
+      border-radius: 10px;
+      font-size: 16px;
+      flex: 1;
+      min-width: 150px;
+      transition: all 0.3s ease;
+    }
+
+    #task-input:focus, #task-time:focus, #task-notes:focus {
+      border-color: var(--salmon);
+      box-shadow: 0 0 10px rgba(255, 111, 97, 0.3);
+      outline: none;
+    }
+
+    #add-task-btn {
+      padding: 12px 25px;
+      background: var(--salmon);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+    }
+
+    #add-task-btn:hover {
+      background: var(--gold);
+      color: #333;
+      transform: scale(1.05);
+    }
+
+    #task-list {
+      list-style: none;
+      width: 100%;
+      max-width: 650px;
+      animation: fadeInUp 1s ease;
+    }
+
+    .task-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.7);
+      margin-bottom: 15px;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      animation: slideIn 0.5s ease forwards;
+      opacity: 0;
+      transform: translateY(20px);
+      cursor: move;
+      transition: all 0.3s ease;
+    }
+
+    .task-item:nth-child(odd) { animation-delay: 0.1s; background: var(--mint); }
+    .task-item:nth-child(even) { animation-delay: 0.2s; background: var(--peach); }
+
+    .task-item.completed {
+      background: var(--lavender);
+      text-decoration: line-through;
+      color: #666;
+      transform: scale(0.98);
+    }
+
+    .task-item label {
+      display: flex;
+      align-items: center;
+      flex: 1;
+    }
+
+    .task-item input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.3);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .task-item input[type="checkbox"]:checked {
+      transform: scale(1.5);
+      accent-color: var(--gold);
+    }
+
+    .task-item button {
+      padding: 8px 15px;
+      margin-left: 10px;
+      background: #ff4444;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .task-item button:hover {
+      background: #cc0000;
+      transform: rotate(-10deg) scale(1.1);
+    }
+
+    .task-item .share-btn {
+      background: #4CAF50;
+    }
+
+    .task-item .share-btn:hover {
+      background: #45a049;
+    }
+
+    .stats {
+      background: rgba(255, 255, 255, 0.85);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      width: 100%;
+      max-width: 650px;
+      text-align: center;
+      margin-top: 20px;
+      animation: bounceIn 1s ease;
+    }
+
+    .stats p {
+      font-size: 18px;
+      color: #444;
+      font-weight: 600;
+    }
+
+    #filter-category, #task-category, #task-recurrence, #task-priority {
+      padding: 12px;
+      border: 2px solid var(--lavender);
+      border-radius: 10px;
+      font-size: 16px;
+      min-width: 150px;
+      transition: all 0.3s ease;
+    }
+
+    #filter-category:focus, #task-category:focus, #task-recurrence:focus, #task-priority:focus {
+      border-color: var(--salmon);
+      box-shadow: 0 0 10px rgba(255, 111, 97, 0.3);
+      outline: none;
+    }
+
+    .confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .confetti.active {
+      opacity: 1;
+    }
+
+    .task-item.priority-low { border-left: 5px solid #d0f4de; }
+    .task-item.priority-medium { border-left: 5px solid var(--salmon); }
+    .task-item.priority-high { border-left: 5px solid #ff4444; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes bounceIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes fall {
+      to { transform: translateY(100vh); opacity: 0; }
+    }
+
+    @media (max-width: 768px) {
+      header {
+        flex-direction: column;
+        padding: 15px;
+      }
+
+      .task-form {
+        flex-direction: column;
+        padding: 20px;
+      }
+
+      #task-input, #task-time, #task-notes, #task-category, #task-recurrence, #task-priority {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      #add-task-btn {
+        width: 100%;
+      }
+
+      nav a {
+        margin: 8px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Ticksy <i class="fas fa-check-circle" style="color: var(--gold);"></i></div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <a href="testimonials.html">Testimonials</a>
+      <a id="nav-login" href="login.html">Login</a>
+      <a id="nav-signup" href="signup.html">Sign Up</a>
+    </nav>
+    <div>
+      <span id="nav-user" class="user-info"></span>
+      <button id="logout-btn" class="logout-btn">Logout</button>
+      <button id="dark-mode-toggle">Toggle Dark Mode</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="task-form">
+      <input type="text" id="task-input" placeholder="Add a new task... 🎉" />
+      <input type="time" id="task-time" />
+      <select id="task-category">
+        <option value="General">General</option>
+        <option value="Work">Work</option>
+        <option value="Personal">Personal</option>
+        <option value="Fitness">Fitness</option>
+      </select>
+      <select id="task-recurrence">
+        <option value="none">No Repeat</option>
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+      </select>
+      <select id="task-priority">
+        <option value="Low">Low</option>
+        <option value="Medium">Medium</option>
+        <option value="High">High</option>
+      </select>
+      <textarea id="task-notes" placeholder="Add notes..." rows="1"></textarea>
+      <button id="add-task-btn">Add Task <i class="fas fa-plus"></i></button>
+    </div>
+    <select id="filter-category" onchange="filterTasks()">
+      <option value="All">All Categories</option>
+      <option value="General">General</option>
+      <option value="Work">Work</option>
+      <option value="Personal">Personal</option>
+      <option value="Fitness">Fitness</option>
+    </select>
+    <ul id="task-list" draggable="true"></ul>
+    <div class="stats" id="task-stats">
+      <p>Total Tasks: <span id="total-tasks">0</span> | Completed: <span id="completed-tasks">0</span></p>
+    </div>
+    <canvas id="progress-chart" width="400" height="200"></canvas>
+  </main>
+  <div class="confetti" id="confetti"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    window.addEventListener('load', () => {
+      const user = JSON.parse(localStorage.getItem('ticksyUser'));
+      if (user) {
+        document.getElementById('nav-user').innerText = `Hi, ${user.name}`;
+        document.getElementById('nav-login').style.display = 'none';
+        document.getElementById('nav-signup').style.display = 'none';
+      } else {
+        window.location.href = 'login.html';
+      }
+
+      const logoutBtn = document.getElementById('logout-btn');
+      logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('ticksyUser');
+        window.location.href = 'index.html';
+      });
+
+      const logo = document.querySelector('.logo');
+      logo.addEventListener('click', () => {
+        window.location.href = 'index.html';
+      });
+
+      const darkModeToggle = document.getElementById('dark-mode-toggle');
+      darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        document.documentElement.style.setProperty('--peach', isDark ? '#4a2c2a' : '#ffe8d9');
+        document.documentElement.style.setProperty('--salmon', isDark ? lightenColor('#ff6f61', 20) : '#ff6f61');
+        document.documentElement.style.setProperty('--mint', isDark ? '#2e4a3d' : '#d0f4de');
+        document.documentElement.style.setProperty('--lavender', isDark ? '#4a3d5a' : '#cdb4db');
+        document.documentElement.style.setProperty('--gold', isDark ? '#b38f00' : '#ffd700');
+        document.documentElement.style.setProperty('--shadow', isDark ? '0 6px 20px rgba(0, 0, 0, 0.3)' : '0 6px 20px rgba(0, 0, 0, 0.1)');
+        renderTasks(); // Re-render to apply new colors
+      });
+
+      // Helper function to lighten a color (simple approximation)
+      function lightenColor(hex, percent) {
+        hex = hex.replace('#', '');
+        const r = parseInt(hex.substr(0, 2), 16);
+        const g = parseInt(hex.substr(2, 2), 16);
+        const b = parseInt(hex.substr(4, 2), 16);
+        const amount = Math.round(2.55 * percent); // 2.55 = 255 / 100
+        const newR = Math.min(255, r + amount);
+        const newG = Math.min(255, g + amount);
+        const newB = Math.min(255, b + amount);
+        return `#${((1 << 24) + (newR << 16) + (newG << 8) + newB).toString(16).slice(1)}`;
+      }
+
+      const addTaskBtn = document.getElementById('add-task-btn');
+      const taskInput = document.getElementById('task-input');
+      const taskTimeInput = document.getElementById('task-time');
+      const taskCategory = document.getElementById('task-category');
+      const taskRecurrence = document.getElementById('task-recurrence');
+      const taskPriority = document.getElementById('task-priority');
+      const taskNotes = document.getElementById('task-notes');
+      const taskList = document.getElementById('task-list');
+      const confettiDiv = document.getElementById('confetti');
+
+      addTaskBtn.addEventListener('click', () => {
+        const taskText = taskInput.value.trim();
+        const timeValue = taskTimeInput.value;
+        const category = taskCategory.value;
+        const recurrence = taskRecurrence.value;
+        const priority = taskPriority.value;
+        const notes = taskNotes.value.trim();
+
+        if (taskText && timeValue) {
+          addTaskBtn.disabled = true;
+          addTaskBtn.textContent = 'Adding...';
+          setTimeout(() => {
+            const [hours, minutes] = timeValue.split(':');
+            const hour = parseInt(hours, 10);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour % 12 || 12;
+            const formattedTime = `${displayHour}:${minutes} ${ampm}`;
+
+            const task = { text: taskText, time: formattedTime, completed: false, date: new Date().toDateString(), category, recurrence, priority, notes };
+            let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+            tasks.push(task);
+            if (recurrence !== 'none') {
+              const nextDate = new Date(task.date);
+              if (recurrence === 'daily') nextDate.setDate(nextDate.getDate() + 1);
+              else if (recurrence === 'weekly') nextDate.setDate(nextDate.getDate() + 7);
+              else if (recurrence === 'monthly') nextDate.setMonth(nextDate.getMonth() + 1);
+              tasks.push({ ...task, date: nextDate.toDateString() });
+            }
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            renderTasks();
+            taskInput.value = '';
+            taskTimeInput.value = '';
+            taskNotes.value = '';
+            addTaskBtn.disabled = false;
+            addTaskBtn.textContent = 'Add Task <i class="fas fa-plus"></i>';
+          }, 500);
+        }
+      });
+
+      function renderTasks() {
+        taskList.innerHTML = '';
+        const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        const todayTasks = tasks.filter(task => task.date === new Date().toDateString());
+        const filter = document.getElementById('filter-category').value;
+        const filteredTasks = filter === 'All' ? todayTasks : todayTasks.filter(task => task.category === filter);
+        const completed = filteredTasks.filter(task => task.completed).length;
+        const total = filteredTasks.length;
+
+        filteredTasks.forEach((task, index) => {
+          const li = document.createElement('li');
+          li.className = `task-item priority-${task.priority.toLowerCase()}`;
+          li.draggable = true;
+          li.dataset.index = index;
+          li.innerHTML = `
+            <label><input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${index})">${task.text} (at ${task.time}) [${task.category}]</label>
+            <button onclick="deleteTask(${index})">Delete <i class="fas fa-trash"></i></button>
+            <button class="share-btn" onclick="shareTask(${index})">Share <i class="fas fa-share"></i></button>
+          `;
+          if (task.notes) {
+            li.title = task.notes;
+          }
+          taskList.appendChild(li);
+          setTimeout(() => li.classList.add('animated'), 0);
+          li.addEventListener('dragstart', dragStart);
+          li.addEventListener('dragover', dragOver);
+          li.addEventListener('drop', drop);
+          li.addEventListener('dragend', dragEnd);
+        });
+
+        document.getElementById('total-tasks').textContent = total;
+        document.getElementById('completed-tasks').textContent = completed;
+
+        if (chart) chart.destroy();
+        const ctx = document.getElementById('progress-chart').getContext('2d');
+        chart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+            labels: ['Completed', 'Pending'],
+            datasets: [{
+              data: [completed, total - completed],
+              backgroundColor: ['#d0f4de', '#ffe8d9']
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { position: 'top' }, title: { display: true, text: 'Daily Task Progress' } }
+          }
+        });
+      }
+
+      function toggleTask(index) {
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        tasks[index].completed = !tasks[index].completed;
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        renderTasks();
+        if (tasks[index].completed) {
+          confetti();
+          const quotes = [
+            "Great job! Keep the momentum going!",
+            "You're unstoppable today!",
+            "One step closer to your goals!"
+          ];
+          alert(quotes[Math.floor(Math.random() * quotes.length)]);
+        }
+      }
+
+      let lastDeletedTask = null;
+      function deleteTask(index) {
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        lastDeletedTask = tasks.splice(index, 1)[0];
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+        renderTasks();
+        setTimeout(() => { lastDeletedTask = null; }, 10000);
+        alert('Task deleted. Undo within 10 seconds!');
+        const undoBtn = document.createElement('button');
+        undoBtn.textContent = 'Undo';
+        undoBtn.style.position = 'fixed';
+        undoBtn.style.bottom = '20px';
+        undoBtn.style.right = '20px';
+        undoBtn.addEventListener('click', undoDelete);
+        document.body.appendChild(undoBtn);
+        setTimeout(() => undoBtn.remove(), 10000);
+      }
+
+      function undoDelete() {
+        if (lastDeletedTask) {
+          let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+          tasks.push(lastDeletedTask);
+          localStorage.setItem('tasks', JSON.stringify(tasks));
+          lastDeletedTask = null;
+          renderTasks();
+        }
+      }
+
+      let dragSrcEl = null;
+      function dragStart(e) {
+        dragSrcEl = this;
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/html', this.innerHTML);
+      }
+
+      function dragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        return false;
+      }
+
+      function drop(e) {
+        e.preventDefault();
+        if (dragSrcEl !== this) {
+          dragSrcEl.innerHTML = this.innerHTML;
+          this.innerHTML = e.dataTransfer.getData('text/html');
+          updateTaskOrder();
+        }
+      }
+
+      function dragEnd(e) {
+        updateTaskOrder();
+      }
+
+      function updateTaskOrder() {
+        const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        const newTasks = Array.from(taskList.children).map((li, newIndex) => {
+          const oldIndex = parseInt(li.dataset.index);
+          return tasks[oldIndex];
+        });
+        localStorage.setItem('tasks', JSON.stringify(newTasks));
+        renderTasks();
+      }
+
+      function confetti() {
+        confettiDiv.innerHTML = '';
+        for (let i = 0; i < 50; i++) {
+          const confettiPiece = document.createElement('div');
+          confettiPiece.style.position = 'absolute';
+          confettiPiece.style.width = '10px';
+          confettiPiece.style.height = '10px';
+          confettiPiece.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+          confettiPiece.style.borderRadius = '50%';
+          confettiPiece.style.left = `${Math.random() * 100}vw`;
+          confettiPiece.style.top = `${Math.random() * 100}vh`;
+          const randomRotation = Math.random() * 360; // Random rotation in JavaScript
+          confettiPiece.style.animation = `fall ${Math.random() * 2 + 1}s linear`;
+          confettiPiece.style.transform = `rotate(${randomRotation}deg)`; // Apply random rotation
+          confettiDiv.appendChild(confettiPiece);
+        }
+        confettiDiv.classList.add('active');
+        setTimeout(() => confettiDiv.classList.remove('active'), 2000);
+      }
+
+      function setupReminders() {
+        if ('Notification' in window && Notification.permission === 'granted') {
+          const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+          const now = new Date();
+          tasks.forEach(task => {
+            const [time] = task.time.split(' ');
+            const [hours, minutes] = task.time.match(/\d+/g);
+            const taskDate = new Date(task.date);
+            taskDate.setHours(parseInt(hours) + (time.includes('PM') && hours != 12 ? 12 : 0), minutes, 0, 0);
+            if (taskDate > now && !task.completed) {
+              const timeDiff = taskDate - now;
+              setTimeout(() => {
+                new Notification('Task Reminder', { body: `${task.text} is due at ${task.time}!` });
+              }, timeDiff);
+            }
+          });
+        } else if (Notification.permission !== 'denied') {
+          Notification.requestPermission();
+        }
+      }
+
+      function shareTask(index) {
+        const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        const task = tasks[index];
+        const shareUrl = `${window.location.origin}${window.location.pathname}?task=${encodeURIComponent(JSON.stringify(task))}`;
+        navigator.clipboard.writeText(shareUrl).then(() => alert('Task link copied to clipboard!'));
+      }
+
+      function filterTasks() {
+        renderTasks();
+      }
+
+      let chart;
+      renderTasks();
+      if (user) setupReminders();
+
+      function checkOnline() {
+        if (!navigator.onLine) {
+          alert('Offline mode. Changes will sync when online.');
+        }
+      }
+      window.addEventListener('offline', checkOnline);
+      window.addEventListener('online', () => {
+        alert('Back online. Syncing changes...');
+        renderTasks();
+      });
+
+      deleteTask = (function(original) {
+        return function(index) {
+          original(index);
+          const undoBtn = document.createElement('button');
+          undoBtn.textContent = 'Undo';
+          undoBtn.style.position = 'fixed';
+          undoBtn.style.bottom = '20px';
+          undoBtn.style.right = '20px';
+          undoBtn.addEventListener('click', undoDelete);
+          document.body.appendChild(undoBtn);
+          setTimeout(() => undoBtn.remove(), 10000);
+        };
+      })(deleteTask);
+    });
+  </script>
+
+</body>
+</html>
